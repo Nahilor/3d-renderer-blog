@@ -13,7 +13,6 @@ This blog covers:
 - **Z-Buffer Implementation**: Depth testing and occlusion handling
 - **Challenges & Solutions**: Real-world debugging experiences
 - **Learning Outcomes**: Key concepts in graphics programming
-- **Tools & Technologies**: Complete stack used in development
 
 ## 🚀 Features
 
@@ -22,7 +21,6 @@ This blog covers:
 - Visual diagrams and screenshots
 - Interactive understanding of 3D graphics fundamentals
 - Well-documented implementation challenges
-- Tools and technologies section with detailed breakdown
 - Fully responsive design for mobile and desktop
 - Enhanced with modern CSS3 gradients and animations
 
@@ -55,22 +53,6 @@ The blog documents the development and implementation of a software 3D renderer 
 - Rasterization algorithms
 - Depth buffering techniques
 - Graphics pipeline architecture
-
-## 🛠️ Tools & Technologies Used
-
-### Development
-- **Java** - Core programming language
-- **Java Swing** - GUI and graphics rendering
-- **Git & GitHub** - Version control and hosting
-
-### Blog & Documentation
-- **HTML5** - Semantic markup
-- **CSS3** - Modern styling with gradients and animations
-
-### Design & Math
-- **Linear Algebra** - Matrix operations and transformations
-- **3D Geometry** - Barycentric coordinates and projection
-- **Computational Graphics** - Rasterization and depth buffering
 
 ## 📚 Learning Path
 
