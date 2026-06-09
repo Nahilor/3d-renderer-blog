@@ -3,548 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A comprehensive blog documenting the development of a 3D renderer in Java Swing, covering graphics programming fundamentals.">
-    <meta name="author" content="Nahilor">
-    <meta name="keywords" content="3D graphics, renderer, Java, Swing, computer graphics, mathematics">
     <title>Building a Simple 3D Renderer in Java Swing</title>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            line-height: 1.8;
-            max-width: 1000px;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            max-width: 900px;
             margin: auto;
             padding: 20px;
-            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            background-color: #fafafa;
             color: #333;
         }
 
         header {
             text-align: center;
-            margin-bottom: 50px;
-            padding-bottom: 30px;
-            border-bottom: 3px solid #e0e0e0;
+            margin-bottom: 40px;
         }
 
         h1 {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            color: #1a1a1a;
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            font-size: 1.1em;
-            color: #666;
-            font-weight: 300;
+            margin-bottom: 10px;
         }
 
         h2 {
-            font-size: 1.8em;
-            margin-top: 50px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #4a90e2;
-            padding-bottom: 12px;
-            color: #2c3e50;
-        }
-
-        h3 {
-            font-size: 1.3em;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            color: #34495e;
-        }
-
-        section {
-            margin-bottom: 40px;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        p {
-            margin-bottom: 15px;
-            line-height: 1.8;
+            margin-top: 40px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
         }
 
         pre {
             background-color: #272822;
             color: #f8f8f2;
-            padding: 20px;
+            padding: 15px;
             overflow-x: auto;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #4a90e2;
-            font-size: 0.95em;
+            border-radius: 5px;
         }
 
         code {
-            font-family: 'Courier New', 'Monaco', monospace;
-            letter-spacing: 0.3px;
-        }
-
-        .inline-code {
-            background-color: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', 'Monaco', monospace;
-            color: #c7254e;
-        }
-
-        .image-container {
-            margin: 30px 0;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            font-family: Consolas, monospace;
         }
 
         .image-placeholder {
             height: 350px;
-            min-width: 300px;
             border: 2px dashed #bbb;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
-            color: #999;
+            margin: 20px 0;
+            background-color: #f5f5f5;
+            color: #666;
             font-style: italic;
-            border-radius: 6px;
-            flex: 1;
         }
 
-        .image-placeholder img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 6px;
-            display: block;
-            margin: 20px auto;
-        }
-
-        ul, ol {
-            margin-left: 30px;
-            margin-bottom: 15px;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        ul li::marker {
-            color: #4a90e2;
-            font-weight: bold;
+        ul {
+            padding-left: 20px;
         }
 
         footer {
             margin-top: 60px;
-            padding-top: 30px;
             text-align: center;
-            color: #888;
-            border-top: 2px solid #e0e0e0;
+            color: #777;
         }
 
         .note {
-            background: linear-gradient(135deg, #eef6ff 0%, #e8f4ff 100%);
-            padding: 20px;
+            background-color: #eef6ff;
+            padding: 15px;
             border-left: 4px solid #4a90e2;
-            margin: 25px 0;
-            border-radius: 6px;
-            font-style: italic;
-        }
-
-        .warning {
-            background: linear-gradient(135deg, #fff3cd 0%, #fff8dc 100%);
-            padding: 20px;
-            border-left: 4px solid #ffc107;
-            margin: 25px 0;
-            border-radius: 6px;
-        }
-
-        .highlight-box {
-            background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
-            padding: 20px;
-            border-radius: 6px;
             margin: 20px 0;
-            border: 1px solid #d0e8ff;
-        }
-
-        .github-link {
-            display: inline-block;
-            background-color: #24292e;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s;
-            margin-top: 15px;
-        }
-
-        .github-link:hover {
-            background-color: #0d1117;
-        }
-
-        .toc {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 30px 0;
-            border: 1px solid #e0e0e0;
-        }
-
-        .toc h3 {
-            margin-top: 0;
-        }
-
-        .toc ul {
-            margin-left: 20px;
-        }
-
-        .toc a {
-            color: #4a90e2;
-            text-decoration: none;
-        }
-
-        .toc a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            h2 {
-                font-size: 1.5em;
-            }
-
-            section {
-                padding: 20px;
-            }
-
-            .image-placeholder {
-                min-width: 100%;
-            }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🎨 Building a Simple 3D Renderer in Java Swing</h1>
-    <p class="subtitle">Understanding the fundamentals of 3D graphics through software rendering</p>
+    <h1>Building a Simple 3D Renderer in Java Swing</h1>
+    <p>Understanding the fundamentals of 3D graphics through software rendering.</p>
 </header>
 
-<div class="toc">
-    <h3>📑 Table of Contents</h3>
-    <ul>
-        <li><a href="#introduction">Introduction</a></li>
-        <li><a href="#object">The Object</a></li>
-        <li><a href="#rotation">Rotating the Object</a></li>
-        <li><a href="#wireframe">Rendering the Wireframe</a></li>
-        <li><a href="#barycentric">Barycentric Coordinates</a></li>
-        <li><a href="#zbuffer">Implementing a Z-Buffer</a></li>
-        <li><a href="#challenges">Challenges</a></li>
-        <li><a href="#learning">What I Learned</a></li>
-        <li><a href="#conclusion">Conclusion</a></li>
-    </ul>
-</div>
-
-<section id="introduction">
+<section>
     <h2>Introduction</h2>
 
     <p>
-        Most modern applications use graphics APIs such as <strong>OpenGL</strong>, <strong>DirectX</strong>, or <strong>Vulkan</strong>
+        Most modern applications use graphics APIs such as OpenGL, DirectX, or Vulkan
         to render 3D objects. I wanted to understand what happens behind those APIs,
         so I built a small 3D renderer using only Java Swing and basic mathematics.
     </p>
 
-    <p><strong>The goal was simple:</strong></p>
+    <p>The goal was simple:</p>
 
     <ul>
         <li>Display a 3D object (Tetrahedron)</li>
         <li>Rotate it using sliders</li>
-        <li>Understand the underlying mathematics and algorithms</li>
     </ul>
 
     <p>
         By the end of the project I had a software renderer capable of drawing and
-        rotating a tetrahedron completely on the CPU, without relying on any GPU acceleration.
+        rotating a tetrahedron completely on the CPU.
     </p>
-
-    <div class="highlight-box">
-        <strong>💡 Key Insight:</strong> By building a renderer from scratch, I gained a deeper understanding of how professional graphics engines work under the hood.
-    </div>
 </section>
 
-<section id="object">
+<section>
     <h2>The Object</h2>
 
     <p>
-        The renderer uses a <strong>tetrahedron</strong> made of four triangular faces. This geometric shape is perfect for learning
-        because it's simple enough to understand but complex enough to demonstrate key rendering concepts.
+        The renderer uses a tetrahedron made of four triangles (faces).
     </p>
 
-    <p><strong>Each triangle consists of three vertices:</strong></p>
+    <p>Each triangle consists of three vertices:</p>
 
     <pre><code>new Vertex(x, y, z)</code></pre>
 
     <p>
         Representing the model as triangles mirrors how modern graphics hardware
-        works internally. GPUs are optimized for triangle rasterization because:
+        works internally.
     </p>
 
-    <ul>
-        <li>Triangles are the simplest 2D primitive</li>
-        <li>Any complex shape can be decomposed into triangles</li>
-        <li>They have well-defined mathematical properties</li>
-    </ul>
-
-    <div class="image-container">
-        <div class="image-placeholder">
-            <img src="images/tetrahedron.png" alt="Tetrahedron 3D Model">
-        </div>
+    <div>
+        <img src="images/tetrahedron.png" alt="Tetrahedron">
     </div>
 </section>
 
-<section id="rotation">
+<section>
     <h2>Rotating the Object</h2>
 
     <p>
-        To rotate the tetrahedron, I used <strong>rotation matrices</strong>. These are fundamental mathematical tools
-        for transforming 3D coordinates around the X, Y, and Z axes.
+        To rotate the tetrahedron I used rotation matrices.
     </p>
-
-    <p>
-        Rotation matrices allow us to apply transformations systematically:
-    </p>
-
-    <ul>
-        <li>Rotation around X-axis: Pitch</li>
-        <li>Rotation around Y-axis: Yaw</li>
-        <li>Rotation around Z-axis: Roll</li>
-    </ul>
-
-    <div class="image-container">
-        <img src="images/rotationMatrix.jpg" alt="Rotation Matrices Visualization" style="max-width: 500px;">
-    </div>
-
-    <p>
-        By combining these matrices, we can achieve any arbitrary rotation in 3D space. The user interface
-        provides sliders to control each axis independently.
-    </p>
+    <img src="images/rotationMatrix.jpg" alt="Rotation Matrices" width="500" height="300">
 </section>
 
-<section id="wireframe">
+<section>
     <h2>Rendering the Wireframe</h2>
 
     <p>
-        The first version of the renderer ignored the z-coordinate completely. This simplified approach allowed me to
-        verify that the matrix transformations were working before adding depth complexity.
+        The first version of the renderer ignored the z-coordinate completely.
     </p>
 
     <p>
-        Using Java's <span class="inline-code">Graphics2D</span> and <span class="inline-code">Path2D</span> classes, each triangle edge was drawn
-        as a line. This produced an <strong>orthographic wireframe view</strong> of the tetrahedron.
+        Using Java's Graphics2D and Path2D classes, each triangle edge was drawn
+        as a line.
     </p>
 
-    <div class="note">
-        <strong>Orthographic projection:</strong> A parallel projection where all rays are parallel to the viewing direction. 
-        No perspective distortion occurs—objects appear the same size regardless of distance from the camera.
-    </div>
+    <p>
+        This produced an orthographic wireframe view of the tetrahedron.
+    </p>
 
-    <div class="image-container">
-        <div class="image-placeholder">
-            <img src="images/wireframe.png" alt="Wireframe Rendering Example">
-        </div>
-        <div class="image-placeholder">
-            <img src="images/wireframe2.png" alt="Wireframe Rendering Another Angle">
-        </div>
+    <div class="image-placeholder">
+        <img src="images/wireframe.png" alt="">
+        <img src="images/wireframe2.png" alt="">
     </div>
 
     <p>
+        <br>
+        <br>
         Although simple, this step verified that the matrix transformations were
-        working correctly before moving to more complex rendering techniques.
+        working correctly.
     </p>
 </section>
 
-<section id="barycentric">
+<section>
     <h2>Barycentric Coordinates</h2>
 
     <p>
-        <strong>Barycentric coordinates</strong> express a point as a weighted combination of the triangle's vertices.
-        They consist of three values (b1, b2, b3) that describe how much influence each vertex has on a pixel.
-    </p>
-
-    <p>
-        This technique is fundamental to <strong>triangle rasterization</strong>—the process of converting a triangle's 
-        continuous geometry into discrete pixel colors.
+        Barycentric coordinates express a point as a weighted combination of the
+        triangle's vertices.
     </p>
 
     <ul>
-        <li><strong>b1:</strong> Weight of the first vertex</li>
-        <li><strong>b2:</strong> Weight of the second vertex</li>
-        <li><strong>b3:</strong> Weight of the third vertex</li>
+        <li>b1</li>
+        <li>b2</li>
+        <li>b3</li>
     </ul>
 
-    <div class="image-container">
-        <img src="images/barycentric.png" alt="Barycentric Coordinates Visualization" style="max-width: 700px;">
+    <p>
+        These values describe how much influence each vertex has on a pixel.
+    </p>
+
+    <div>
+        <img src="images/barycentric.png" alt="" width="700" height="400">
     </div>
 
     <p>
         Besides determining triangle membership, barycentric coordinates can also
-        <strong>interpolate values</strong> across a surface. This is crucial for:
+        interpolate values across a surface.
     </p>
-
-    <ul>
-        <li>Smooth color gradients across triangles</li>
-        <li>Texture mapping</li>
-        <li>Normal interpolation for lighting calculations</li>
-        <li>Depth interpolation for the z-buffer</li>
-    </ul>
 </section>
 
-<section id="zbuffer">
+<section>
     <h2>Implementing a Z-Buffer</h2>
 
     <p>
-        After rasterization, another problem appeared. Triangles were rendered in the order they were stored in memory. 
-        This meant a triangle <strong>behind another could incorrectly appear in front</strong>—a depth ordering issue.
+        After rasterization, another problem appeared.
     </p>
 
     <p>
-        To solve this, I implemented a <strong>z-buffer</strong> (also called a depth buffer), a technique used by virtually 
-        all modern graphics hardware.
+        Triangles were rendered in the order they were stored. This meant a
+        triangle behind another could incorrectly appear in front.
     </p>
 
-    <div class="note">
-        The z-buffer stores the closest depth value for every pixel on the screen. It allows the renderer to correctly determine
-        which surface should be visible at each pixel.
+    <p>
+        To solve this, I implemented a z-buffer.
+    </p>
+
+    <p>See how the last face to be rendered appears in front:</p>
+
+    <div>
+        <img src="images/beforez.png" alt="">
+    </div>
+    
+    <div>
+        <img src="images/afterz.png" alt="">
     </div>
 
-    <p><strong>The z-buffer algorithm works in four steps:</strong></p>
+    <div class="note">
+        The z-buffer stores the closest depth value for every pixel on the screen.
+    </div>
 
     <ol>
         <li>Interpolate depth using barycentric coordinates</li>
-        <li>Compare depth against the z-buffer value</li>
-        <li>Draw the pixel only if it is closer to the camera</li>
-        <li>Update the z-buffer with the new depth value</li>
+        <li>Compare depth against the z-buffer</li>
+        <li>Draw the pixel only if it is closer</li>
+        <li>Update the z-buffer</li>
     </ol>
-
-    <p><strong>Visual Comparison:</strong></p>
-
-    <div class="image-container">
-        <div class="image-placeholder">
-            <img src="images/beforez.png" alt="Before Z-Buffer Implementation">
-        </div>
-        <div class="image-placeholder">
-            <img src="images/afterz.png" alt="After Z-Buffer Implementation">
-        </div>
-    </div>
-
-    <p>
-        The left image shows rendering without depth testing—faces overlap incorrectly. The right image shows
-        the result after implementing the z-buffer—proper depth ordering is maintained.
-    </p>
 </section>
 
-<section id="challenges">
-    <h2>Challenges & Lessons</h2>
-
-    <p>
-        Building a graphics renderer from scratch presented several debugging challenges that provided valuable insights:
-    </p>
+<section>
+    <h2>Challenges</h2>
 
     <ul>
-        <li>
-            <strong>Coordinate Translation Issues:</strong> The rasterized image appeared offset from the wireframe due to
-            inconsistent coordinate system transformations between rendering stages.
-        </li>
-        <li>
-            <strong>Z-Buffer Lifecycle:</strong> The z-buffer was initially recreated for every pixel instead of every frame,
-            causing performance issues and incorrect depth comparisons.
-        </li>
-        <li>
-            <strong>Depth Testing Bounds:</strong> Depth testing was performed outside the triangle bounds, leading to
-            pixels being incorrectly marked as occluded.
-        </li>
-        <li>
-            <strong>Depth Direction:</strong> Determining whether larger or smaller z-values represented pixels closer to
-            the camera required careful debugging and understanding of coordinate systems.
-        </li>
+        <li>The rasterized image appeared offset from the wireframe due to coordinate translation issues.</li>
+        <li>The z-buffer was initially recreated for every pixel instead of every frame.</li>
+        <li>Depth testing was performed outside the triangle bounds.</li>
+        <li>Determining whether larger or smaller z-values represented pixels closer to the camera required debugging.</li>
     </ul>
 
-    <div class="highlight-box">
-        <strong>🎯 Key Takeaway:</strong> Each bug provided a better understanding of how real rendering pipelines work. 
-        Professional graphics engines handle these issues through carefully designed abstractions and optimizations.
-    </div>
+    <p>
+        Each bug provided a better understanding of how real rendering pipelines work.
+    </p>
 </section>
 
-<section id="learning">
+<section>
     <h2>What I Learned</h2>
 
-    <p>
-        This project covered essential concepts in computer graphics and 3D mathematics:
-    </p>
-
     <ul>
-        <li><strong>Matrix multiplication</strong> — Combining transformations</li>
-        <li><strong>3D rotations</strong> — Euler angles and rotation matrices</li>
-        <li><strong>Coordinate transformations</strong> — Model, view, and projection spaces</li>
-        <li><strong>Barycentric coordinates</strong> — Point-in-triangle testing and interpolation</li>
-        <li><strong>Triangle rasterization</strong> — Converting geometry to pixels</li>
-        <li><strong>Depth buffering</strong> — Hidden surface removal</li>
-        <li><strong>The graphics pipeline</strong> — How data flows from vertex to pixel</li>
+        <li>Matrix multiplication</li>
+        <li>3D rotations</li>
+        <li>Coordinate transformations</li>
+        <li>Barycentric coordinates</li>
+        <li>Triangle rasterization</li>
+        <li>Depth buffering</li>
+        <li>The fundamentals of the graphics pipeline</li>
     </ul>
-
-    <p>
-        These fundamentals apply to all rendering systems, from real-time game engines to offline rendering frameworks.
-    </p>
 </section>
 
-<section id="conclusion">
+<section>
     <h2>Conclusion</h2>
 
     <p>
-        Building a renderer from scratch was a very interesting experience. I had previously used graphics APIs (OpenGL), 
-        but implementing the entire pipeline manually provided a much deeper understanding of how 3D graphics work.
+        Building a renderer from scratch was a very interesting experience. 
+        I have previously used graphics APIs(OpenGl), but implementing the entire pipeline manually provided a much deeper understanding of how 3D graphics work.
     </p>
-
-    <p>
-        Rather than treating graphics libraries as black boxes, I now understand the mathematical and algorithmic 
-        foundations that make them possible. This knowledge makes me a better programmer when working with graphics APIs—
-        I can write more efficient code and debug rendering issues more effectively.
-    </p>
-
-    <p>
-        If you're interested in computer graphics, I highly recommend building a simple renderer yourself. The experience
-        is invaluable for understanding modern graphics systems.
-    </p>
-
-    <a href="https://github.com/Nahilor/simple-3d-renderer" target="_blank" class="github-link">
-        📖 View Source Code on GitHub
-    </a>
 </section>
 
 <footer>
-    <p><strong>Built with:</strong> Java Swing</p>
-    <p><strong>Topics:</strong> Computer Graphics • 3D Rendering • Mathematics • Software Engineering</p>
-    <p><strong>Full Source Code:</strong> <a href="https://github.com/Nahilor/simple-3d-renderer" target="_blank">github.com/Nahilor/simple-3d-renderer</a></p>
-    <p><strong>Blog Repository:</strong> <a href="https://github.com/Nahilor/3d-renderer-blog" target="_blank">github.com/Nahilor/3d-renderer-blog</a></p>
-    <p style="margin-top: 20px; color: #999;">© 2026 • Educational Project</p>
+    <p>Built with Java Swing</p>
+    <p>Source code available on <a href="https://github.com/Nahilor/simple-3d-renderer" target="_blank">GitHub</a></p>
 </footer>
 
 </body>
