@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Simple 3D Renderer in Java Swing</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fafafa;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 40px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
+        }
+
+        pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 5px;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .image-placeholder {
+            height: 350px;
+            border: 2px dashed #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            background-color: #f5f5f5;
+            color: #666;
+            font-style: italic;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #777;
+        }
+
+        .note {
+            background-color: #eef6ff;
+            padding: 15px;
+            border-left: 4px solid #4a90e2;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Building a Simple 3D Renderer in Java Swing</h1>
+    <p>Understanding the fundamentals of 3D graphics through software rendering.</p>
+</header>
+
+<section>
+    <h2>Introduction</h2>
+
+    <p>
+        Most modern applications use graphics APIs such as OpenGL, DirectX, or Vulkan
+        to render 3D objects. I wanted to understand what happens behind those APIs,
+        so I built a small 3D renderer using only Java Swing and basic mathematics.
+    </p>
+
+    <p>The goal was simple:</p>
+
+    <ul>
+        <li>Display a 3D object (Tetrahedron)</li>
+        <li>Rotate it using sliders</li>
+    </ul>
+
+    <p>
+        By the end of the project I had a software renderer capable of drawing and
+        rotating a tetrahedron completely on the CPU.
+    </p>
+</section>
+
+<section>
+    <h2>The Object</h2>
+
+    <p>
+        The renderer uses a tetrahedron made of four triangles (faces).
+    </p>
+
+    <p>Each triangle consists of three vertices:</p>
+
+    <pre><code>new Vertex(x, y, z)</code></pre>
+
+    <p>
+        Representing the model as triangles mirrors how modern graphics hardware
+        works internally.
+    </p>
+
+    <div>
+        <img src="tetrahedron.png" alt="Tetrahedron">
+    </div>
+</section>
+
+<section>
+    <h2>Rotating the Object</h2>
+
+    <p>
+        To rotate the tetrahedron I used rotation matrices.
+    </p>
+    <img src="rotationMatrix.jpg" alt="Rotation Matrices" width="500" height="300">
+</section>
+
+<section>
+    <h2>Rendering the Wireframe</h2>
+
+    <p>
+        The first version of the renderer ignored the z-coordinate completely.
+    </p>
+
+    <p>
+        Using Java's Graphics2D and Path2D classes, each triangle edge was drawn
+        as a line.
+    </p>
+
+    <p>
+        This produced an orthographic wireframe view of the tetrahedron.
+    </p>
+
+    <div class="image-placeholder">
+        <img src="wireframe.png" alt="">
+        <img src="wireframe2.png" alt="">
+    </div>
+
+    <p>
+        <br>
+        <br>
+        Although simple, this step verified that the matrix transformations were
+        working correctly.
+    </p>
+</section>
+
+<section>
+    <h2>Barycentric Coordinates</h2>
+
+    <p>
+        Barycentric coordinates express a point as a weighted combination of the
+        triangle's vertices.
+    </p>
+
+    <ul>
+        <li>b1</li>
+        <li>b2</li>
+        <li>b3</li>
+    </ul>
+
+    <p>
+        These values describe how much influence each vertex has on a pixel.
+    </p>
+
+    <div>
+        <img src="barycentric.png" alt="" width="700" height="400">
+    </div>
+
+    <p>
+        Besides determining triangle membership, barycentric coordinates can also
+        interpolate values across a surface.
+    </p>
+</section>
+
+<section>
+    <h2>Implementing a Z-Buffer</h2>
+
+    <p>
+        After rasterization, another problem appeared.
+    </p>
+
+    <p>
+        Triangles were rendered in the order they were stored. This meant a
+        triangle behind another could incorrectly appear in front.
+    </p>
+
+    <p>
+        To solve this, I implemented a z-buffer.
+    </p>
+
+    <p>See how the last face to be rendered appears in front:</p>
+
+    <div>
+        <img src="beforez.png" alt="">
+    </div>
+    
+    <div>
+        <img src="afterz.png" alt="">
+    </div>
+
+    <div class="note">
+        The z-buffer stores the closest depth value for every pixel on the screen.
+    </div>
+
+    <ol>
+        <li>Interpolate depth using barycentric coordinates</li>
+        <li>Compare depth against the z-buffer</li>
+        <li>Draw the pixel only if it is closer</li>
+        <li>Update the z-buffer</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Challenges</h2>
+
+    <ul>
+        <li>The rasterized image appeared offset from the wireframe due to coordinate translation issues.</li>
+        <li>The z-buffer was initially recreated for every pixel instead of every frame.</li>
+        <li>Depth testing was performed outside the triangle bounds.</li>
+        <li>Determining whether larger or smaller z-values represented pixels closer to the camera required debugging.</li>
+    </ul>
+
+    <p>
+        Each bug provided a better understanding of how real rendering pipelines work.
+    </p>
+</section>
+
+<section>
+    <h2>What I Learned</h2>
+
+    <ul>
+        <li>Matrix multiplication</li>
+        <li>3D rotations</li>
+        <li>Coordinate transformations</li>
+        <li>Barycentric coordinates</li>
+        <li>Triangle rasterization</li>
+        <li>Depth buffering</li>
+        <li>The fundamentals of the graphics pipeline</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Conclusion</h2>
+
+    <p>
+        Building a renderer from scratch was a very interesting experience. 
+        I have previously used graphics APIs(OpenGl), but implementing the entire pipeline manually provided a much deeper understanding of how 3D graphics work.
+    </p>
+</section>
+
+<footer>
+    <p>Built with Java Swing</p>
+    <p>Source code available on <a href="https://github.com/Nahilor/simple-3d-renderer" target="_blank">GitHub</a></p>
+</footer>
+
+</body>
+</html>
